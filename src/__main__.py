@@ -1,5 +1,6 @@
 from crawler import web_crawler
 
+
 def main():
     web_crawler.kick_start()
 

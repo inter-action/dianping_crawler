@@ -1,0 +1,17 @@
+
+
+ref docs:
+
+    http://selenium-python.readthedocs.io/getting-started.html
+
+    https://neo4j.com/developer/python/#_py2neo
+
+todos:
+
+    https://www.genedock.com/blog/2015/10/25/python-import/
+    unittest -
+        https://www.internalpointers.com/post/run-painless-test-suites-python-unittest
+        http://docs.python-guide.org/en/latest/writing/tests/
+
+    add a try finally anotation to neo4j transaction
+    http://py2neo.org/v3/

@@ -2,8 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 # my lib
-from driver import chrome_driver as mydriver
-
+from ..driver import chrome_driver as mydriver
 
 def get_followed(id="5016495"):
     """
@@ -16,6 +15,7 @@ def get_followed(id="5016495"):
     mydriver.navi_to(url)
     ls = mydriver.find_elements(li_selector)
     return [(e.text.strip("..."), e.get_attribute("user-id")) for e in ls]
+
 
 def get_review(id="309382395"):
     """
@@ -77,6 +77,7 @@ def get_review(id="309382395"):
 
     return {"rate": rate(), "shop": shop()}
 
+
 def pagination_has_next():
     pg = mydriver.find_element(".pages-num")
     try:
@@ -85,13 +86,16 @@ def pagination_has_next():
     except NoSuchElementException:
         return False
 
+
 def next_page():
     pg = mydriver.find_element(".pages-num")
     pg.find_element_by_css_selector(".page-next").click()   
 
+
 def get_ls():
     ls = mydriver.find_elements(".mode-tc.comm-photo > a")
     return ls 
+
 
 def kick_start(id="5016495"):
     url = "http://www.dianping.com/member/%s/reviews" % id
@@ -114,6 +118,7 @@ def kick_start(id="5016495"):
         next_page()
     return rs
 
+
 def main():
     driver = webdriver.Chrome()
     driver.get("http://www.python.org")
@@ -124,6 +129,7 @@ def main():
     elem.send_keys(Keys.RETURN)
     assert "No results found." not in driver.page_source
     driver.close()
+
 
 if __name__ == '__main__':
     import sys
