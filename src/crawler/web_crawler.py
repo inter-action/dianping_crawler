@@ -11,7 +11,7 @@ from ..driver import chrome_driver as mydriver
 
 class Crawler:
     @staticmethod
-    def get_followed(id="5016495"):
+    def get_followed(id):
         """
         [('宇宙无敌大羙麗', '15443091'),
         ('啦啦啦_27057', '1079941710'),
@@ -148,8 +148,8 @@ class Crawler:
 
     @staticmethod
     def pagination_has_next():
-        pg = mydriver.find_element(".pages-num")
         try:
+            pg = mydriver.find_element(".pages-num")
             pg.find_element_by_css_selector(".page-next")
             return True
         except NoSuchElementException:
@@ -173,7 +173,7 @@ class Crawler:
         return mydriver.find_elements(".comm-list .pic-txt > ul > li")
 
     @staticmethod
-    def get_user_reivews(id="5016495"):
+    def get_user_reivews(id):
         url = "http://www.dianping.com/member/%s/reviews" % id
         rs = []
         driver = mydriver.get_driver()

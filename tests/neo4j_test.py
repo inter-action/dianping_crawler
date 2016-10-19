@@ -24,9 +24,11 @@ class TestNeo4jMethods(unittest.TestCase):
         PersistentLayer.insert_followed(user, followed)
         self.assertEqual(True, True)
 
+
+    @unittest.skip
     def test_review_insertion(self):
         user = {"name": "alex", "id": '3'}
-        reviews = Pickler.load_reviews()
+        reviews = Pickler.load_data("you need to provide data file name here")
         PersistentLayer.insert_reviews(user, reviews)
 
 
@@ -49,10 +51,12 @@ class CypherBuilderTest(unittest.TestCase):
             "{id: {pid}, name: {pname}}"
         ]))
 
+
     def test_cypher_dict_prefix(self):
         person = {"name": "alex", "id": "3"}
         result = cypher_builder.prefix_dict(person, "p")
         self.assertEqual(result, {"pname": "alex", "pid": "3"})
+
 
 if __name__ == '__main__':
     unittest.main()

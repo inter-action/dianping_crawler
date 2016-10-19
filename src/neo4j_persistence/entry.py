@@ -12,6 +12,7 @@ class PersistentLayer:
     @staticmethod
     def insert_followed(user, followed):
         """
+        :param user: {id: , name:}
         :param followed:
             [('宇宙无敌大羙麗', '15443091'),...]
         """
@@ -19,7 +20,7 @@ class PersistentLayer:
 
         relation_str = '''
         MATCH (a:Person {id: {id}})
-        MERGE (a)-[:FOLLOWED]->(x:Person {name:{fname}, fid: {fid}})
+        MERGE (a)-[:FOLLOWED]->(x:Person {name:{fname}, id: {fid}})
         '''
         # 这条数据必须得在数据库中, 才能执行下边的操作
         session.run("MERGE (a:Person {name:{name}, id:{id}})", {"name": user["name"], "id": user["id"]})
