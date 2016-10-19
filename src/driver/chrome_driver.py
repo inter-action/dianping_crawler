@@ -27,6 +27,11 @@ def find_elements(sel):
 def find_element(sel):
     return driver.find_element_by_css_selector(sel)
 
+
+def find_element_by_id(id):
+    return driver.find_element_by_id(id)
+
+
 def close():
     global driver
     global is_driver_closed

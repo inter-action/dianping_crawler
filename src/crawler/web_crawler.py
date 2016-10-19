@@ -1,6 +1,7 @@
 #core
 import re
-
+import time
+import sys
 
 # third lib
 from selenium import webdriver
@@ -67,6 +68,33 @@ class Crawler:
         markbox = mydriver.find_element("div.box.remarkDet")
         shopbox = mydriver.find_element("div.box.reviewShop")
 
+        def chats():
+            def getto(root):
+                try:
+                    a = root.find_element_by_css_selector(".contList-con > a")
+                    to_id = a.get_attribute("href").split("/")[-1]
+                    return to_id
+                except NoSuchElementException:
+                    return None
+
+            try:
+                result = []
+                dls = mydriver.find_elements("#followNote > dl")
+                for dl in dls:
+                    comment = {}
+                    canchor = dl.find_element_by_css_selector("cite > a")
+                    comment["uid"] = canchor.get_attribute("href").split("/")[-1]
+                    comment["uname"] = canchor.text
+                    comment["content"] = dl.find_element_by_css_selector(".contList-con > span").text
+                    comment["time"] = dl.find_element_by_css_selector(".contList-fn > .date").text
+                    to = getto(dl)
+                    if to is not None:
+                        comment["resp_to"] = to
+                    result.append(comment)
+
+                return result
+            except NoSuchElementException:
+                return []
 
         def rate():
             def time():
@@ -74,11 +102,14 @@ class Crawler:
                 return e.text
 
             def rating():
-                e = markbox.find_element_by_css_selector("ul.contList-info > li > span")
-                cls = e.get_attribute("class")
-                if cls != None and cls.startswith("msstar") is True:
-                    return 	float(cls[6:])/10
-                return 0.0
+                try:
+                    e = markbox.find_element_by_css_selector("ul.contList-info > li > span")
+                    cls = e.get_attribute("class")
+                    if cls is not None and cls.startswith("msstar") is True:
+                        return float(cls[6:]) / 10
+                    return 0.0
+                except NoSuchElementException:
+                    return 0.0
 
             def image_ls():
                 try:
@@ -110,7 +141,7 @@ class Crawler:
             e["tel"] = shopbox.find_element_by_css_selector(" dl:nth-child(4) > dd").text
             return e
 
-        return {"rate": rate(), "shop": shop()}
+        return {"rate": rate(), "shop": shop(), "chats": chats()}
 
     @staticmethod
     def get_simple_review(parent_node):
@@ -196,21 +227,40 @@ class Crawler:
         driver = mydriver.get_driver()
         driver.get(url)
 
-        while True:
-            review_lis = Crawler.get_review_lis()
-            for i in range(0, len(review_lis)):
-                print("get driver i: {}".format(str(i)))
-                # fix Message: stale element reference
+        counter = 0
+        try:
+            while True:
                 review_lis = Crawler.get_review_lis()
-                li = review_lis[i]
-                heart_achor_id = li.find_element_by_css_selector("a.aheart").get_attribute("data-id")
-                rs.append(Crawler.get_detailed_review(heart_achor_id))
-                driver.back()
+                for i in range(0, len(review_lis)):
+                    # fix Message: stale element reference
+                    review_lis = Crawler.get_review_lis()
+                    li = review_lis[i]
+                    heart_achor_id = li.find_element_by_css_selector("a.aheart").get_attribute("data-id")
 
-            if Crawler.pagination_has_next():
-                Crawler.next_page()
-                print("next page..")
-            else:
-                break
+                    try:
+                        rs.append(Crawler.get_detailed_review(heart_achor_id))
+                        driver.back()
+                    except NoSuchElementException as e:
+                        print("encounting error, pause for now...", e)
+                        print("\a") #play a beep
+                        time.sleep(60)
+                    time.sleep(0.2)
+
+                counter += 1
+                if counter % 10 == 0:
+                    secs = 10
+                    print("just in case.. reaching threshold, sleep for {} seconds".format(secs))
+                    time.sleep(secs)
+
+                if Crawler.pagination_has_next():
+                    Crawler.next_page()
+                    print("next page..")
+                else:
+                    break
+
+        except:
+            print("recovering failed...exiting..., page: {}, review_id: {} ".format(counter+1, id), sys.exc_info()[0])
+
+
         return rs
 
