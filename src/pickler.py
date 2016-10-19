@@ -14,15 +14,9 @@ class Pickler:
     def save_review(reviews, filename=DEFAULT_REVIEW_FILENAME):
         filepath = DATA_PATH.joinpath(filename)
         # An arbitrary collection of objects supported by pickle.
-        data = {
-            'a': [1, 2.0, 3, 4 + 6j],
-            'b': ("character string", b"byte string"),
-            'c': {None, True, False}
-        }
-
         with filepath.open("wb") as f:
             # Pickle the 'data' dictionary using the highest protocol available.
-            pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
+            pickle.dump(reviews, f, pickle.HIGHEST_PROTOCOL)
 
 
     @staticmethod

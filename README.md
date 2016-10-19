@@ -28,47 +28,18 @@ install virtualenv, pip, ipython !
         pip freeze > requirements.txt #freeze dependencies
 
 
-
-* setting up Makefile
-    
-    http://krzysztofzuraw.com/blog/2016/makefiles-in-python-projects.html
-    https://gist.github.com/bsmith89/c6811893c1cbd2a72cc1d144a197bef2
-
-
 ## with Makefile:
 
-    make run-main       # run this project.
-
-
-## with vscode:
-https://code.visualstudio.com/docs/languages/python
-
-## with ipython
-先activate virtualenv, then `>ipython`
-
-    ctrl + l  #clear screen
-    
-    # --- auto reload module:
-    # http://stackoverflow.com/questions/5364050/reloading-submodules-in-ipython
-
-    %load_ext autoreload
-    %autoreload 2
-
-    
-
-
-# Python3 language:
-python3 module system - https://docs.python.org/3/tutorial/modules.html
-
-    dir()               # print out what available in this module
-    import builtins     # see what inside builtins
-    
-
-Exceptions - https://docs.python.org/3/tutorial/errors.html
+    make run       # run this project.
 
 
 # Neo4J
 
+supported datatypes:
+* Numeric values
+* String values
+* Boolean values
+* Lists of any other type of value
 
 # Links
 

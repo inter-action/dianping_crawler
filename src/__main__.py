@@ -6,8 +6,9 @@ def main():
         reviews = Pickler.load_reviews()
     except RuntimeError:
         reviews = Crawler.get_user_reivews("194275696")
-        Pickler.save_review({"a": 3})
+        Pickler.save_review(reviews)
     print(reviews)
+    print("length: {}".format(len(reviews)))
 
 if __name__ == '__main__':
     import sys

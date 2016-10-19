@@ -22,7 +22,12 @@ class Crawler:
     def get_review(id="309382395"):
         """
         返回大众点评单个review
-        {'rate': {'id': '309382395',  # 评论ID
+        {'shop': {'tel': '17710850213', 
+            'id': '67862761', 
+            'name': 'AUV真人机械密室逃脱体验馆(芍药居店)', 
+            'addr': '朝阳区芍药居北里309号B1楼'}
+            'href': '..',
+         'rate': {'id': '309382395',  # 评论ID
             'image_ls': ['http://www.dianping.com/photos/600819018/member',
             'http://www.dianping.com/photos/600819019/member',
             'http://www.dianping.com/photos/600819020/member',
@@ -32,7 +37,8 @@ class Crawler:
             'shop': {'addr': '海淀区万泉河路68号紫金庄园7号楼-12A09',
             'id': '/www.dianping.com/shop/24820793',
             'name': '回未轰趴馆(人大店)',
-            'tel': '15810026196'}}
+            'tel': '15810026196'},
+            'href': '..'}
         """
         # url = "http://www.dianping.com/review/%s" % id
         # mydriver.navi_to(url)
@@ -66,13 +72,15 @@ class Crawler:
             e["image_ls"] = image_ls()
             e["comment"] = comment()
             e["id"] = id
+            e["href"] = "http://www.dianping.com/review/{}".format(id)
             return e
 
         def shop():
             e = {}
             na = shopbox.find_element_by_css_selector("h1>a")
             e["name"] = na.text
-            e["id"] = na.get_attribute("href")[6:]
+            e["href"] = na.get_attribute("href")
+            e["id"] = na.get_attribute("href").split("/")[-1]
             e["addr"] = shopbox.find_element_by_css_selector("dl:nth-child(3) > dd > a").text
             e["tel"] = shopbox.find_element_by_css_selector(" dl:nth-child(4) > dd").text
             return e
