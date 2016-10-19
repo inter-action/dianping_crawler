@@ -1,3 +1,8 @@
+#core
+import re
+
+
+# third lib
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
@@ -19,7 +24,7 @@ class Crawler:
         return [(e.text.strip("..."), e.get_attribute("user-id")) for e in ls]
 
     @staticmethod
-    def get_review(id="309382395"):
+    def get_detailed_review(id):
         """
         返回大众点评单个review
         {'shop': {'tel': '17710850213', 
@@ -40,8 +45,8 @@ class Crawler:
             'tel': '15810026196'},
             'href': '..'}
         """
-        # url = "http://www.dianping.com/review/%s" % id
-        # mydriver.navi_to(url)
+        url = "http://www.dianping.com/review/{}".format(id)
+        mydriver.navi_to(url)
         markbox = mydriver.find_element("div.box.remarkDet")
         shopbox = mydriver.find_element("div.box.reviewShop")
 
@@ -59,8 +64,11 @@ class Crawler:
                 return 0.0
 
             def image_ls():
-                es = markbox.find_elements_by_css_selector("#dp_c > li.item > p > a")
-                return [e.get_attribute("href") for e in es]
+                try:
+                    es = markbox.find_elements_by_css_selector("#dp_c > li.item > p > a")
+                    return [e.get_attribute("href") for e in es]
+                except NoSuchElementException:
+                    return []
 
             def comment():
                 e = markbox.find_element_by_css_selector(".contList-con > p")
@@ -72,7 +80,7 @@ class Crawler:
             e["image_ls"] = image_ls()
             e["comment"] = comment()
             e["id"] = id
-            e["href"] = "http://www.dianping.com/review/{}".format(id)
+            e["href"] = url
             return e
 
         def shop():
@@ -88,6 +96,57 @@ class Crawler:
         return {"rate": rate(), "shop": shop()}
 
     @staticmethod
+    def get_simple_review(parent_node):
+        """
+        这个不需要了, 放在这里， 这段代码，直接根据id跳到点评详情页面然后get_detailed_review用这个函数去搞
+        {'shop': {'tel': '17710850213',
+            'id': '67862761',
+            'name': 'AUV真人机械密室逃脱体验馆(芍药居店)',
+            'addr': '朝阳区芍药居北里309号B1楼'}
+            'href': '..',
+         'rate': {'id': '309382395',  # 评论ID
+            'image_ls': ['http://www.dianping.com/photos/600819018/member',
+            'http://www.dianping.com/photos/600819019/member',
+            'http://www.dianping.com/photos/600819020/member',
+            'http://www.dianping.com/photos/600819021/member'],
+            'rating': 5.0,
+            'time': '16-10-16 12:37'},
+            'shop': {'addr': '海淀区万泉河路68号紫金庄园7号楼-12A09',
+            'id': '/www.dianping.com/shop/24820793',
+            'name': '回未轰趴馆(人大店)',
+            'tel': '15810026196'},
+            'href': '..'}
+
+        :param parent_node:
+        :return:
+        """
+        def rating():
+            star_node_class = parent_node.find_element_by_css_selector(".mode-tc.comm-rst > span").get_attribute("class")
+            matchObj = re.match(r"irr-star(\d+)", star_node_class, re.I)
+            if matchObj:
+                return float(matchObj.group(1)) / 10
+            else:
+                return 0.0
+
+        shop = {}
+        shop_a = parent_node.find_element_by_css_selector("h6>a")
+        shop["href"] = shop_a.get_attribute("href")
+        shop["id"] = shop["href"].split("/")[-1]
+        shop["name"] = shop_a.text
+        shop["addr"] = parent_node.find_element_by_css_selector(".mode-tc.addres > p").text
+
+        rate = {}
+        rate_info_node = parent_node.find_element_by_css_selector(".mode-tc.info")
+        rate["id"] = rate_info_node.find_element_by_css_selector("a.aheart").get_attribute("data-id")
+        rate["rating"] = rating()
+        rate["time"] = rate_info_node.find_element_by_css_selector("span.col-exp").text[3:]
+        rate["comment"] = parent_node.find_element_by_css_selector(".mode-tc.comm-entry").text
+        
+
+        return {"shop": shop, "rate": rate}
+
+
+    @staticmethod
     def pagination_has_next():
         pg = mydriver.find_element(".pages-num")
         try:
@@ -97,14 +156,21 @@ class Crawler:
             return False
 
     @staticmethod
+    def get_detail_anchor(parent_node):
+        # 这个函数也不用了, 留个尸体在这里
+        try:
+            return parent_node.find_element_by_css_selector('.mode-tc.comm-photo')
+        except NoSuchElementException:
+            return None
+
+    @staticmethod
     def next_page():
         pg = mydriver.find_element(".pages-num")
         pg.find_element_by_css_selector(".page-next").click()
 
     @staticmethod
-    def get_ls():
-        ls = mydriver.find_elements(".mode-tc.comm-photo > a")
-        return ls
+    def get_review_lis():
+        return mydriver.find_elements(".comm-list .pic-txt > ul > li")
 
     @staticmethod
     def get_user_reivews(id="5016495"):
@@ -112,19 +178,22 @@ class Crawler:
         rs = []
         driver = mydriver.get_driver()
         driver.get(url)
-        while Crawler.pagination_has_next():
-            ls = Crawler.get_ls()
 
-            for i in range(0, len(ls)):
+        while True:
+            review_lis = Crawler.get_review_lis()
+            for i in range(0, len(review_lis)):
+                print("get driver i: {}".format(str(i)))
                 # fix Message: stale element reference
-                ls = Crawler.get_ls()
-                l = ls[i]
-
-                rid = l.get_attribute("href").split("/")[-1]
-                l.click()
-                rs.append( Crawler.get_review(rid) )
+                review_lis = Crawler.get_review_lis()
+                li = review_lis[i]
+                heart_achor_id = li.find_element_by_css_selector("a.aheart").get_attribute("data-id")
+                rs.append(Crawler.get_detailed_review(heart_achor_id))
                 driver.back()
 
-            Crawler.next_page()
+            if Crawler.pagination_has_next():
+                Crawler.next_page()
+                print("next page..")
+            else:
+                break
         return rs
 
