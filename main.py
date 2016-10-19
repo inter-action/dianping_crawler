@@ -28,7 +28,6 @@ class PersistentBiz:
     def persist_user_reviews(self, user):
         uid = user["id"]
         reviews = self.crawl_user_reviews(uid)
-        print(reviews)
         print("length(reviews): {}".format(len(reviews)))
         if len(reviews) != 0:
             PersistentLayer.insert_reviews(user, reviews)
@@ -50,7 +49,7 @@ class PersistentBiz:
 
 
 def main():
-    target_user = {"id": "194275696", "name": "西红柿炒番茄炒西红柿"}
+    target_user = {"id": "194275696", "name": "target_xx"}
     peristent_biz = PersistentBiz(UserPickler(target_user))
     peristent_biz.persist_user_reviews(target_user)
 
@@ -58,12 +57,14 @@ def main():
     rels = rels_result[1]
 
     count = 0
+    max_loop = 99
     for rel in rels:
         user = {"name": rel[0], "id": rel[1]}
         if not peristent_biz.persist_user_reviews(user)[0]:
             print("persist user info failed: user: {}, id: {} ".format(user["name"], user["id"]))
         count += 1
-        if count == 5: break
+        print("rel loop: {}".format(count))
+        if count == max_loop: break
 
 
 

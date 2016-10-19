@@ -12,6 +12,16 @@ from ..driver import chrome_driver as mydriver
 class Crawler:
     @staticmethod
     def get_followed(id):
+        def next_link():
+            return mydriver.find_element("a.page-next")
+
+        def has_next_page():
+            try:
+                next_link()
+                return True
+            except NoSuchElementException:
+                return False
+
         """
         [('宇宙无敌大羙麗', '15443091'),
         ('啦啦啦_27057', '1079941710'),
@@ -20,8 +30,15 @@ class Crawler:
         url = "http://www.dianping.com/member/%s/follows" % id
         li_selector = "div.modebox.fllow-list ul > li div.tit > h6 > a"
         mydriver.navi_to(url)
-        ls = mydriver.find_elements(li_selector)
-        return [(e.text.strip("..."), e.get_attribute("user-id")) for e in ls]
+        result = []
+        while True:
+            ls = mydriver.find_elements(li_selector)
+            result.extend( [(e.text.strip("..."), e.get_attribute("user-id")) for e in ls] )
+            if has_next_page():
+                next_link().click()
+            else: break
+
+        return result
 
     @staticmethod
     def get_detailed_review(id):
