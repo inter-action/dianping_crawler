@@ -12,7 +12,7 @@ class PersistentLayer:
     @staticmethod
     def insert_followed(user, followed):
         """
-        :param user: {id: , name:}
+        :param user: {id: , name}
         :param followed:
             [('宇宙无敌大羙麗', '15443091'),...]
         """
@@ -20,7 +20,7 @@ class PersistentLayer:
 
         relation_str = '''
         MATCH (a:Person {id: {id}})
-        MERGE (a)-[:FOLLOWED]->(x:Person {name:{fname}, id: {fid}})
+        MERGE (a)-[:FOLLOWED]->(x:Person {name:{fname}, fid: {fid}})
         '''
         # 这条数据必须得在数据库中, 才能执行下边的操作
         session.run("MERGE (a:Person {name:{name}, id:{id}})", {"name": user["name"], "id": user["id"]})
@@ -50,7 +50,7 @@ class PersistentLayer:
             'rating': 5.0,
             'time': '16-10-16 12:37'},
             'shop': {'addr': '海淀区万泉河路68号紫金庄园7号楼-12A09',
-            'id': '/www.dianping.com/shop/24820793',
+            'id': '24820793',
             'name': '回未轰趴馆(人大店)',
             'tel': '15810026196'},
             'href': '..'}
@@ -59,12 +59,14 @@ class PersistentLayer:
         rate = reviews[0]["rate"]
         placeholder_rate = build_placeholders(rate, prefix="r")
         placeholder_shop = build_placeholders(shop, prefix="s")
+        # todo: 这种方式还是有可能出现shop重复的情况, 找到更好的解决方式
         relation_str = '''
                 MATCH (a:Person {id: {uid}})
-                MERGE (a)-[:RATED {%s}]->(:Shop {%s})
+                MERGE (s:Shop {%s})
+                MERGE (a)-[:RATED {%s}]->(s)
                 '''
 
-        relation_str = StringUtils.format(relation_str, placeholder_rate, placeholder_shop)
+        relation_str = StringUtils.format(relation_str, placeholder_shop, placeholder_rate)
         # # 这条数据必须得在数据库中, 才能执行下边的操作
         session.run("MERGE (a:Person {name:{name}, id:{id}})", {"name": user["name"], "id": user["id"]})
         with session.begin_transaction() as tx:
