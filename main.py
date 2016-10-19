@@ -1,5 +1,5 @@
-from .crawler.web_crawler import Crawler
-from .pickler import Pickler
+from src.crawler.web_crawler import Crawler
+from src.pickler import Pickler
 
 def main():
     try:
