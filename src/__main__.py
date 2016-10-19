@@ -1,8 +1,13 @@
-from crawler import web_crawler
-
+from .crawler.web_crawler import Crawler
+from .pickler import Pickler
 
 def main():
-    web_crawler.kick_start()
+    try:
+        reviews = Pickler.load_reviews()
+    except RuntimeError:
+        reviews = Crawler.get_user_reivews("194275696")
+        Pickler.save_review({"a": 3})
+    print(reviews)
 
 if __name__ == '__main__':
     import sys

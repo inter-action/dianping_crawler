@@ -28,4 +28,4 @@ deps-install:
 	pip install -r requirements.txt
 
 run:
-	python src/__main__.py
+	python -m src.__main__
