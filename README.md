@@ -16,6 +16,7 @@
 ## Preliminaries - 前置条件:
 * 你需要装chrome webdriver
 * 你需要启动neo4j数据库.如果你用docker的话就执行:
+
     ```
     docker run \
         --publish=7474:7474 --publish=7687:7687 \
