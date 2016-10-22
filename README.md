@@ -11,6 +11,7 @@
 
 对于存储到neo4j之后如何分析, 这个就不说了, 以后会放张存储到neo4j的截图。
 
+![](./readme_assets/graph.png)
 # Project Settings Up
 
 ## Preliminaries - 前置条件:
@@ -79,7 +80,7 @@ supported datatypes:
         add python unit test
         add logger to replace print method
         将爬虫中sleep可配置
-        
+
     pending:
         add a linter
         在neo4j持久层方法上添加decorator, 抽离session.create, session.close语句
