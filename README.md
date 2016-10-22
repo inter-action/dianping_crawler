@@ -80,10 +80,11 @@ supported datatypes:
         add python unit test
         add logger to replace print method
         将爬虫中sleep可配置
+        在neo4j持久层方法上添加decorator, 抽离session.create, session.close语句
+            -ignored: http://blog.apcelent.com/python-decorator-tutorial-with-example.html
 
     pending:
         add a linter
-        在neo4j持久层方法上添加decorator, 抽离session.create, session.close语句
         添加并发?根据用户评论数量决定是否启用并发?-这个优先级不是很高
         
         
