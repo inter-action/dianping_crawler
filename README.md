@@ -23,6 +23,10 @@
         --volume=$HOME/neo4j/data:/data \
         neo4j
     ```
+
+    如果报错的话, `vim /Users/interaction/.neo4j/known_hosts`清空里边的内容 
+    open you browser: `http://0.0.0.0:7474/browser/`
+    
 * my python version - Python 3.5.2
 
 ## 启动
@@ -74,12 +78,13 @@ supported datatypes:
     done: 
         add python unit test
         add logger to replace print method
-
+        将爬虫中sleep可配置
+        
     pending:
         add a linter
         在neo4j持久层方法上添加decorator, 抽离session.create, session.close语句
         添加并发?根据用户评论数量决定是否启用并发?-这个优先级不是很高
-        将爬虫中sleep可配置
+        
         
 
         

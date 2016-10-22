@@ -220,7 +220,15 @@ class Crawler:
         return mydriver.find_elements(".comm-list .pic-txt > ul > li")
 
     @staticmethod
-    def get_user_reivews(id):
+    def get_user_reivews(id, is_disable_sleep=True):
+        def sleep(secs, before_sleep=None):
+            if not is_disable_sleep:
+                if before_sleep is not None:
+                    before_sleep()
+                time.sleep(secs)
+
+
+
         url = "http://www.dianping.com/member/%s/reviews" % id
         rs = []
         driver = mydriver.get_driver()
@@ -240,16 +248,17 @@ class Crawler:
                         rs.append(Crawler.get_detailed_review(heart_achor_id))
                         driver.back()
                     except NoSuchElementException as e:
-                        LOG.warn("encounting error, pause for now...", e)
                         print("\a") #play a beep
-                        time.sleep(60)
-                    time.sleep(0.2)
+                        is_continue = input("* encounter a error, do you want to continue? (y)es, (n)o?: ")
+                        if is_continue != "y":
+                            raise RuntimeError("user stoped this op.")
+
+                    sleep(0.2)
 
                 counter += 1
                 if counter % 10 == 0:
                     secs = 10
-                    LOG.info("just in case.. reaching threshold, sleep for {} seconds".format(secs))
-                    time.sleep(secs)
+                    sleep(secs, lambda: LOG.info("just in case.. reaching threshold, sleep for {} seconds".format(secs)))
 
                 if Crawler.pagination_has_next():
                     Crawler.next_page()
