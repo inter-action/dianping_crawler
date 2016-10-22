@@ -1,9 +1,8 @@
 import pickle
-import os
-from pathlib import Path
+from . import constants
 
-PROJECT_ROOT_PATH = Path(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')).resolve()
-DATA_PATH = PROJECT_ROOT_PATH.joinpath("data")
+PROJECT_ROOT_PATH = constants.PROJECT_ROOT_PATH
+DATA_PATH = constants.DATA_PATH
 if not DATA_PATH.exists():
     DATA_PATH.mkdir()
 

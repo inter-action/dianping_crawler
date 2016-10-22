@@ -4,11 +4,10 @@ import time
 import sys
 
 # third lib
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 # my lib
 from ..driver import chrome_driver as mydriver
+from ..logging import LOG
 
 class Crawler:
     @staticmethod
@@ -241,7 +240,7 @@ class Crawler:
                         rs.append(Crawler.get_detailed_review(heart_achor_id))
                         driver.back()
                     except NoSuchElementException as e:
-                        print("encounting error, pause for now...", e)
+                        LOG.warn("encounting error, pause for now...", e)
                         print("\a") #play a beep
                         time.sleep(60)
                     time.sleep(0.2)
@@ -249,17 +248,17 @@ class Crawler:
                 counter += 1
                 if counter % 10 == 0:
                     secs = 10
-                    print("just in case.. reaching threshold, sleep for {} seconds".format(secs))
+                    LOG.info("just in case.. reaching threshold, sleep for {} seconds".format(secs))
                     time.sleep(secs)
 
                 if Crawler.pagination_has_next():
                     Crawler.next_page()
-                    print("next page..")
+                    LOG.info("next page..")
                 else:
                     break
 
         except:
-            print("recovering failed...exiting..., page: {}, review_id: {} ".format(counter+1, id), sys.exc_info()[0])
+            LOG.error("recovering failed...exiting..., page: {}, review_id: {} ".format(counter+1, id), sys.exc_info()[0])
 
 
         return rs

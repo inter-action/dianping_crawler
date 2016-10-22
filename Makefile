@@ -28,4 +28,4 @@ deps-install:
 	pip install -r requirements.txt
 
 run:
-	python main.py
+	LOGGER_LEVEL=INFO python main.py

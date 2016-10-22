@@ -47,6 +47,10 @@
 * working with pip:
 
         pip freeze > requirements.txt #freeze dependencies
+        
+# About logger
+all logging data goes to log/running.log file
+you can configure logging level in Makefile, default is INFO.
 
 
 # Neo4J
@@ -65,21 +69,18 @@ supported datatypes:
 
 # Links
 
-* [sklearn working with text example](http://scikit-learn.sourceforge.net/stable/auto_examples/index.html#working-with-text-documents)
-
-
-
 ## todos:
 
     done: 
         add python unit test
+        add logger to replace print method
 
     pending:
         add a linter
         在neo4j持久层方法上添加decorator, 抽离session.create, session.close语句
         添加并发?根据用户评论数量决定是否启用并发?-这个优先级不是很高
         将爬虫中sleep可配置
-        add logger to replace print method
+        
 
         
 

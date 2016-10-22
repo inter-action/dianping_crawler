@@ -9,10 +9,7 @@ def get_driver():
     global driver
     if driver is not None and is_driver_closed != True:
         return driver
-
-    print("create new driver")
     driver = webdriver.Chrome()
-
     return driver
 
 

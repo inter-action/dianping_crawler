@@ -12,7 +12,10 @@
                 "WaitOnAbnormalExit",
                 "WaitOnNormalExit",
                 "RedirectOutput"
-            ]
+            ],
+            "env": {
+                "LOGGER_LEVEL": "DEBUG"
+            }
         },
         {
             "name": "Integrated Terminal/Console",
